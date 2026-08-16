@@ -12,7 +12,6 @@ class QuantumAIManager:
 
         self.models = {
             "general": "meta-llama/llama-4-scout-17b-16e-instruct",
-            "vision": "meta-llama/llama-4-scout-17b-16e-instruct",
             "speech_to_text": "whisper-large-v3-turbo"
         }
 
