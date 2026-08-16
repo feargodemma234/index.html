@@ -1,10 +1,13 @@
-from ai_manager import QuantumAIManager
-ai = QuantumAIManager()
 import streamlit as st
-from groq import Groq
-import base64
-import html
+from ai_manager import QuantumAIManager
 
+ai = QuantumAIManager()
+
+st.set_page_config(
+    page_title="Quantum OS",
+    page_icon="⚛️",
+    layout="wide"
+)
 st.set_page_config(
     page_title="Quantum OS",
     page_icon="⚛️",
