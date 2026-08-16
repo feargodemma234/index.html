@@ -12,7 +12,6 @@ class QuantumAIManager:
 
         self.models = {
     "general": "llama-3.3-70b-versatile",
-    "vision": "gemini-2.0-flash",  # Need google-genai SDK for this
     "speech_to_text": "whisper-large-v3-turbo"
 }
 
