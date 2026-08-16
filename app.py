@@ -30,10 +30,6 @@ if "messages" not in st.session_state:
     st.session_state.messages = []
 
 
-if "vision_result" not in st.session_state:
-    st.session_state.vision_result = ""
-
-
 if "voice_result" not in st.session_state:
     st.session_state.voice_result = ""
 
@@ -195,7 +191,6 @@ with st.sidebar:
             "🏠 Home",
             "🤖 Quantum AI",
             "🎙️ Quantum Voice",
-            "👁️ Quantum Vision",
             "🏢 Divisions",
             "📁 Files",
             "⚙️ Settings"
@@ -229,7 +224,7 @@ if page == "🏠 Home":
     st.markdown(
         '<div class="subtitle">'
         'The digital foundation of '
-        'The Quantum Administration Empire.'
+        'The Quantum Administration Empire made by the sovereign emperor.'
         '</div>',
         unsafe_allow_html=True
     )
