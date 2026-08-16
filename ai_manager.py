@@ -66,7 +66,15 @@ Do not pretend hypothetical projects already exist.
             max_tokens=2000
         )
 
-        return response.choices[0].message.content
+        answer = response.choices[0].message.content
+
+# Remove any visible reasoning blocks
+if "<think>" in answer:
+    answer = answer.split("<think>", 1)[1]
+    if "</think>" in answer:
+        answer = answer.split("</think>", 1)[1]
+
+return answer.strip()
 
     # ==========================================
     # VOICE → TEXT
