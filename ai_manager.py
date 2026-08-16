@@ -11,10 +11,10 @@ class QuantumAIManager:
         )
 
         self.models = {
-            "general": "meta-llama/llama-4-scout-17b-16e-instruct",
-            "vision": "meta-llama/llama-4-scout-17b-16e-instruct",
-            "speech_to_text": "whisper-large-v3-turbo"
-        }
+    "general": "llama-3.3-70b-versatile",   # was llama-4-scout
+    "vision": "llama-3.2-11b-vision-preview",  # Groq's current vision model
+    "speech_to_text": "whisper-large-v3-turbo"  # this one is still good
+}
 
     # ==========================================
     # GENERAL AI
