@@ -11,9 +11,9 @@ class QuantumAIManager:
         )
 
         self.models = {
-    "general": "llama-3.3-70b-versatile",   # Quantum AI
-    "vision": "llama-3.2-90b-vision-preview",  # Quantum Vision - 90b is still alive
-    "speech_to_text": "whisper-large-v3-turbo"  # Quantum Voice
+    "general": "llama-3.3-70b-versatile",        # Quantum AI - still works
+    "vision": "meta-llama/llama-4-scout-17b-16e-instruct",  # Quantum Vision - NEW
+    "speech_to_text": "whisper-large-v3-turbo"   # Quantum Voice - still works
 }
 
     # ==========================================
