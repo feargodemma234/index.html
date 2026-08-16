@@ -64,16 +64,12 @@ Do not describe your hidden reasoning.
             max_tokens=2000
         )
 
-        answer = response.choices[0].message.content or ""
+        answer = response.choices[0].message.content
 
-        # Remove visible reasoning tags if the model produces them
-        if "<think>" in answer:
-            answer = answer.split("<think>", 1)[1]
+# Remove any visible reasoning blocks
+if "<think>" in answer:
+    answer = answer.split("<think>", 1)[1]
+    if "</think>" in answer:
+        answer = answer.split("</think>", 1)[1]
 
-            if "</think>" in answer:
-                answer = answer.split("</think>", 1)[1]
-
-        return answer.strip()
-
-    def get_model(self):
-        return self.text_model
+return answer.strip()
