@@ -195,7 +195,6 @@ with st.sidebar:
             "🏠 Home",
             "🤖 Quantum AI",
             "🎙️ Quantum Voice",
-            "👁️ Quantum Vision",
             "🏢 Divisions",
             "📁 Files",
             "⚙️ Settings"
@@ -271,11 +270,6 @@ if page == "🏠 Home":
 
         st.markdown("""
         <div class="card">
-
-        <h3>👁️ Quantum Vision</h3>
-
-        <p>
-        Use your camera to analyze images.
         </p>
 
         </div>
@@ -297,12 +291,6 @@ if page == "🏠 Home":
     with c2:
         st.metric(
             "AI",
-            "ONLINE"
-        )
-
-    with c3:
-        st.metric(
-            "VISION",
             "ONLINE"
         )
 
