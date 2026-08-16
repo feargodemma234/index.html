@@ -1,3 +1,5 @@
+from ai_manager import QuantumAIManager
+ai = QuantumAIManager()
 import streamlit as st
 from groq import Groq
 import base64
