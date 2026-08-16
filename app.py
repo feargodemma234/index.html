@@ -1,11 +1,7 @@
 import streamlit as st
-import streamlit.components.v1 as components
 from groq import Groq
-from datetime import datetime
-
-# ==============================
-# PAGE CONFIG
-# ==============================
+import base64
+import html
 
 st.set_page_config(
     page_title="Quantum OS",
@@ -13,9 +9,17 @@ st.set_page_config(
     layout="wide"
 )
 
-# ==============================
-# STYLE
-# ==============================
+# -----------------------------
+# SESSION STATE
+# -----------------------------
+
+if "messages" not in st.session_state:
+    st.session_state.messages = []
+
+
+# -----------------------------
+# STYLING
+# -----------------------------
 
 st.markdown("""
 <style>
@@ -32,18 +36,9 @@ st.markdown("""
     background: #090d1c;
 }
 
-h1, h2, h3 {
-    color: white;
-}
-
 .quantum-title {
     font-size: 42px;
     font-weight: 800;
-}
-
-.subtitle {
-    color: #aeb8d8;
-    margin-bottom: 25px;
 }
 
 .card {
@@ -54,26 +49,112 @@ h1, h2, h3 {
     margin-bottom: 15px;
 }
 
-.voice-card {
-    padding: 25px;
-    border-radius: 20px;
-    background: rgba(255,255,255,0.05);
-    text-align: center;
-}
-
 </style>
 """, unsafe_allow_html=True)
 
-# ==============================
-# SESSION STATE
-# ==============================
 
-if "messages" not in st.session_state:
-    st.session_state.messages = []
+# -----------------------------
+# GROQ
+# -----------------------------
 
-# ==============================
+def get_groq():
+
+    return Groq(
+        api_key=st.secrets["GROQ_API_KEY"]
+    )
+
+
+# -----------------------------
+# AI FUNCTION
+# -----------------------------
+
+def ask_quantum_ai(user_text):
+
+    client = get_groq()
+
+    system_prompt = """
+You are Quantum AI, the AI assistant inside Quantum OS.
+
+You are part of The Quantum Administration Empire.
+
+Help the user with:
+AI, software, robotics, energy, health,
+space, sports, manufacturing,
+infrastructure, defense, and exploration.
+
+Be helpful, concise, technically accurate,
+and clear.
+
+The Quantum Administration Empire is a
+project being developed by the user.
+Do not claim that hypothetical projects
+already exist.
+"""
+
+    messages = [
+        {
+            "role": "system",
+            "content": system_prompt
+        }
+    ]
+
+    messages.extend(st.session_state.messages)
+
+    messages.append({
+        "role": "user",
+        "content": user_text
+    })
+
+    response = client.chat.completions.create(
+        model="llama-3.3-70b-versatile",
+        messages=messages,
+        temperature=0.7,
+        max_tokens=1500
+    )
+
+    return response.choices[0].message.content
+
+
+# -----------------------------
+# SPEAK RESPONSE
+# -----------------------------
+
+def speak_text(text):
+
+    safe_text = html.escape(text)
+
+    components_html = f"""
+    <script>
+
+    const text = {safe_text!r};
+
+    if ("speechSynthesis" in window) {{
+
+        window.speechSynthesis.cancel();
+
+        const speech =
+            new SpeechSynthesisUtterance(text);
+
+        speech.lang = "en-US";
+        speech.rate = 1.0;
+        speech.pitch = 1.0;
+        speech.volume = 1.0;
+
+        window.speechSynthesis.speak(speech);
+    }}
+
+    </script>
+    """
+
+    st.components.v1.html(
+        components_html,
+        height=0
+    )
+
+
+# -----------------------------
 # SIDEBAR
-# ==============================
+# -----------------------------
 
 with st.sidebar:
 
@@ -84,7 +165,7 @@ with st.sidebar:
         [
             "🏠 Home",
             "🤖 Quantum AI",
-            "🎙️ Voice AI",
+            "🎙️ Quantum Voice",
             "🏢 Divisions",
             "📁 Files",
             "⚙️ Settings"
@@ -94,12 +175,12 @@ with st.sidebar:
     st.divider()
 
     st.caption("The Quantum Administration Empire")
-    st.caption("Quantum OS v0.3")
+    st.caption("Quantum OS v0.4")
 
 
-# ==============================
+# -----------------------------
 # HOME
-# ==============================
+# -----------------------------
 
 if page == "🏠 Home":
 
@@ -108,16 +189,17 @@ if page == "🏠 Home":
         unsafe_allow_html=True
     )
 
-    st.markdown(
-        '<div class="subtitle">'
-        'The digital foundation of The Quantum Administration Empire.'
-        '</div>',
-        unsafe_allow_html=True
+    st.write(
+        "The digital foundation of "
+        "The Quantum Administration Empire."
     )
 
-    col1, col2, col3 = st.columns(3)
+    st.divider()
 
-    with col1:
+    c1, c2, c3 = st.columns(3)
+
+    with c1:
+
         st.markdown("""
         <div class="card">
         <h3>🤖 Quantum AI</h3>
@@ -125,15 +207,17 @@ if page == "🏠 Home":
         </div>
         """, unsafe_allow_html=True)
 
-    with col2:
+    with c2:
+
         st.markdown("""
         <div class="card">
-        <h3>🎙️ Voice</h3>
-        <p>Talk to Quantum AI using your microphone.</p>
+        <h3>🎙️ Quantum Voice</h3>
+        <p>Talk to Quantum AI.</p>
         </div>
         """, unsafe_allow_html=True)
 
-    with col3:
+    with c3:
+
         st.markdown("""
         <div class="card">
         <h3>🏢 Empire</h3>
@@ -141,96 +225,42 @@ if page == "🏠 Home":
         </div>
         """, unsafe_allow_html=True)
 
-    st.divider()
 
-    st.subheader("System Status")
-
-    c1, c2, c3 = st.columns(3)
-
-    with c1:
-        st.metric("Quantum OS", "ONLINE")
-
-    with c2:
-        st.metric("AI Engine", "GROQ")
-
-    with c3:
-        st.metric("Version", "0.3")
-
-
-# ==============================
+# -----------------------------
 # TEXT AI
-# ==============================
+# -----------------------------
 
 elif page == "🤖 Quantum AI":
 
     st.title("🤖 Quantum AI")
-
-    st.caption("Powered by Groq")
 
     for message in st.session_state.messages:
 
         with st.chat_message(message["role"]):
             st.markdown(message["content"])
 
-    prompt = st.chat_input("Ask Quantum AI...")
+    prompt = st.chat_input(
+        "Ask Quantum AI..."
+    )
 
     if prompt:
+
+        with st.chat_message("user"):
+            st.markdown(prompt)
 
         st.session_state.messages.append({
             "role": "user",
             "content": prompt
         })
 
-        with st.chat_message("user"):
-            st.markdown(prompt)
-
         try:
 
-            client = Groq(
-                api_key=st.secrets["GROQ_API_KEY"]
-            )
-
-            messages = [
-                {
-                    "role": "system",
-                    "content": """
-You are Quantum AI.
-
-You are the AI assistant of
-The Quantum Administration Empire.
-
-Help the user build technology,
-software, AI, robotics, energy,
-health, space, manufacturing,
-infrastructure and exploration projects.
-
-Be clear, ambitious and technically
-accurate.
-
-Never pretend that a hypothetical
-project already exists.
-"""
-                }
-            ]
-
-            messages.extend(
-                st.session_state.messages
-            )
-
-            response = client.chat.completions.create(
-                model="llama-3.3-70b-versatile",
-                messages=messages,
-                temperature=0.7,
-                max_tokens=2000
-            )
-
-            answer = response.choices[0].message.content
+            answer = ask_quantum_ai(prompt)
 
         except Exception as e:
 
             answer = (
                 "I couldn't connect to Groq.\n\n"
-                "Check your GROQ_API_KEY in Streamlit Secrets.\n\n"
                 f"Error: `{e}`"
             )
 
@@ -243,178 +273,104 @@ project already exists.
             st.markdown(answer)
 
 
-# ==============================
+# -----------------------------
 # VOICE AI
-# ==============================
+# -----------------------------
 
-elif page == "🎙️ Voice AI":
+elif page == "🎙️ Quantum Voice":
 
     st.title("🎙️ Quantum Voice")
 
     st.write(
-        "Talk to Quantum AI using your device microphone."
+        "Record your voice, and Quantum AI will "
+        "answer aloud."
     )
 
     st.divider()
 
-    # Browser speech recognition
-    components.html(
-        """
-        <!DOCTYPE html>
-
-        <html>
-
-        <body style="
-            background: transparent;
-            color: white;
-            font-family: Arial;
-            text-align: center;
-        ">
-
-        <h2>🎙️ Quantum Voice</h2>
-
-        <button
-            onclick="startListening()"
-            style="
-                font-size:20px;
-                padding:15px 25px;
-                border-radius:15px;
-                border:none;
-                cursor:pointer;
-            "
-        >
-        🎤 Talk
-        </button>
-
-        <button
-            onclick="stopSpeaking()"
-            style="
-                font-size:20px;
-                padding:15px 25px;
-                border-radius:15px;
-                border:none;
-                cursor:pointer;
-                margin-left:10px;
-            "
-        >
-        🔇 Stop
-        </button>
-
-        <p id="status">
-        Press Talk and speak.
-        </p>
-
-        <p id="result"></p>
-
-        <script>
-
-        const SpeechRecognition =
-            window.SpeechRecognition ||
-            window.webkitSpeechRecognition;
-
-        let recognition;
-
-        if (SpeechRecognition) {
-
-            recognition = new SpeechRecognition();
-
-            recognition.continuous = false;
-
-            recognition.interimResults = false;
-
-            recognition.lang = "en-US";
-
-            recognition.onstart = function() {
-
-                document.getElementById("status")
-                .innerText =
-                "🎙️ Listening...";
-
-            };
-
-            recognition.onresult = function(event) {
-
-                const text =
-                    event.results[0][0].transcript;
-
-                document.getElementById("result")
-                .innerText =
-                    "You said: " + text;
-
-                document.getElementById("status")
-                .innerText =
-                    "Voice captured.";
-
-                // Send recognized text to Streamlit
-                window.parent.postMessage({
-                    type: "quantum_voice",
-                    text: text
-                }, "*");
-
-            };
-
-            recognition.onerror = function(event) {
-
-                document.getElementById("status")
-                .innerText =
-                    "Microphone error: " +
-                    event.error;
-
-            };
-
-        } else {
-
-            document.getElementById("status")
-            .innerText =
-            "Speech recognition is not supported by this browser.";
-
-        }
-
-
-        function startListening() {
-
-            if (recognition) {
-
-                recognition.start();
-
-            }
-
-        }
-
-
-        function stopSpeaking() {
-
-            window.speechSynthesis.cancel();
-
-            document.getElementById("status")
-            .innerText =
-            "Speech stopped.";
-
-        }
-
-        </script>
-
-        </body>
-
-        </html>
-        """,
-        height=300
+    audio = st.audio_input(
+        "🎤 Press to record",
+        sample_rate=16000,
+        key="quantum_voice_input"
     )
 
-    st.info(
-        "The microphone component captures your voice. "
-        "The next step is connecting the captured text "
-        "directly to the Groq conversation."
-    )
+    if audio:
+
+        st.audio(audio)
+
+        with st.spinner(
+            "🎧 Understanding your voice..."
+        ):
+
+            try:
+
+                client = get_groq()
+
+                # Send audio to Groq transcription
+                transcription = client.audio.transcriptions.create(
+                    file=(
+                        "voice.wav",
+                        audio.getvalue(),
+                        "audio/wav"
+                    ),
+                    model="whisper-large-v3-turbo"
+                )
+
+                user_text = transcription.text
+
+                st.markdown(
+                    f"**You:** {user_text}"
+                )
+
+                # Ask Quantum AI
+                with st.spinner(
+                    "🤖 Quantum AI is thinking..."
+                ):
+
+                    answer = ask_quantum_ai(
+                        user_text
+                    )
+
+                st.markdown(
+                    f"**Quantum AI:** {answer}"
+                )
+
+                # Save conversation
+                st.session_state.messages.append({
+                    "role": "user",
+                    "content": user_text
+                })
+
+                st.session_state.messages.append({
+                    "role": "assistant",
+                    "content": answer
+                })
+
+                # Speak
+                speak_text(answer)
+
+                st.success(
+                    "🔊 Quantum AI is speaking."
+                )
+
+            except Exception as e:
+
+                st.error(
+                    "Voice AI error:"
+                )
+
+                st.code(str(e))
 
 
-# ==============================
+# -----------------------------
 # DIVISIONS
-# ==============================
+# -----------------------------
 
 elif page == "🏢 Divisions":
 
-    st.title("🏢 Quantum Administration Empire")
+    st.title(
+        "🏢 Quantum Administration Empire"
+    )
 
     divisions = [
         ("🤖", "AI"),
@@ -447,9 +403,9 @@ elif page == "🏢 Divisions":
     )
 
 
-# ==============================
+# -----------------------------
 # FILES
-# ==============================
+# -----------------------------
 
 elif page == "📁 Files":
 
@@ -469,33 +425,38 @@ elif page == "📁 Files":
             )
 
 
-# ==============================
+# -----------------------------
 # SETTINGS
-# ==============================
+# -----------------------------
 
 elif page == "⚙️ Settings":
 
-    st.title("⚙️ Quantum OS Settings")
+    st.title("⚙️ Settings")
 
-    st.write("**Version:** 0.3")
-    st.write("**AI:** Groq")
-    st.write("**Interface:** Streamlit")
-    st.write("**Project:** Building an Empire")
+    st.write(
+        "**Quantum OS:** 0.4"
+    )
+
+    st.write(
+        "**AI Engine:** Groq"
+    )
+
+    st.write(
+        "**Voice:** Groq Whisper + Browser Speech"
+    )
+
+    st.write(
+        "**Project:** Building an Empire"
+    )
 
     st.divider()
 
-    if st.button("Clear AI Conversation"):
+    if st.button(
+        "🗑️ Clear Conversation"
+    ):
 
         st.session_state.messages = []
 
         st.success(
             "Conversation cleared."
         )
-
-    st.divider()
-
-    st.caption(
-        datetime.now().strftime(
-            "%Y-%m-%d %H:%M:%S"
-        )
-    )
