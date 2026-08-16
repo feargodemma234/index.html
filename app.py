@@ -8,11 +8,6 @@ st.set_page_config(
     page_icon="⚛️",
     layout="wide"
 )
-st.set_page_config(
-    page_title="Quantum OS",
-    page_icon="⚛️",
-    layout="wide"
-)
 
 # -----------------------------
 # SESSION STATE
