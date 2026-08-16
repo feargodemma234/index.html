@@ -11,9 +11,9 @@ class QuantumAIManager:
         )
 
         self.models = {
-    "general": "llama-3.3-70b-versatile",   # was llama-4-scout
-    "vision": "llama-3.2-11b-vision-preview",  # Groq's current vision model
-    "speech_to_text": "whisper-large-v3-turbo"  # this one is still good
+    "general": "llama-3.3-70b-versatile",   # Quantum AI
+    "vision": "llama-3.2-90b-vision-preview",  # Quantum Vision - 90b is still alive
+    "speech_to_text": "whisper-large-v3-turbo"  # Quantum Voice
 }
 
     # ==========================================
