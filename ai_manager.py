@@ -1,19 +1,17 @@
 import streamlit as st
 from groq import Groq
-import base64
 
 
 class QuantumAIManager:
 
     def __init__(self):
-
         self.client = Groq(
             api_key=st.secrets["GROQ_API_KEY"]
         )
 
         self.models = {
-            "text": "llama-3.3-70b-versatile",
-            "vision": "qwen/qwen3.6-27b"
+            "text": "qwen/qwen3.6-27b",
+            "speech_to_text": "whisper-large-v3-turbo"
         }
 
     # ==========================================
@@ -31,16 +29,34 @@ of Quantum OS.
 
 You are part of The Quantum Administration Empire.
 
-Help the user with:
-AI, software, robotics, energy, health,
-space, sports, manufacturing,
-infrastructure, defense, exploration,
-science and business.
+The Empire is being developed across:
 
-Be clear, useful and technically accurate.
+AI
+Robotics
+Energy
+Health
+Space
+Sports
+Manufacturing
+Infrastructure
+Defense
+Exploration
 
-Do not claim that hypothetical projects
-already exist.
+You can help with:
+- Programming
+- Science
+- Engineering
+- Business
+- Planning
+- Research
+- Mathematics
+- Technology
+- The development of Quantum OS
+
+Be clear, useful and accurate.
+
+Never claim that a hypothetical project
+already exists when it does not.
 """
             }
         ]
@@ -57,86 +73,45 @@ already exist.
             model=self.models["text"],
             messages=messages,
             temperature=0.7,
-            max_tokens=2000
+            max_tokens=3000
         )
 
         return response.choices[0].message.content
 
     # ==========================================
-    # VISION
+    # SPEECH TO TEXT
     # ==========================================
 
-    def vision(self, question, image_bytes):
+    def transcribe(self, audio_bytes):
 
-        image_base64 = base64.b64encode(
-            image_bytes
-        ).decode("utf-8")
-
-        response = self.client.chat.completions.create(
-
-            model=self.models["vision"],
-
-            messages=[
-                {
-                    "role": "system",
-                    "content": """
-You are Quantum Vision.
-
-Analyze the supplied image carefully.
-
-Identify visible:
-- Objects
-- Animals
-- Plants
-- Vehicles
-- Buildings
-- Devices
-- Machines
-- Text
-- Scenes
-- General visual information
-
-Describe what is actually visible.
-
-Do not invent objects.
-
-If you are uncertain about something,
-clearly say that you are uncertain.
-
-Do not identify people by name.
-"""
-                },
-
-                {
-                    "role": "user",
-                    "content": [
-                        {
-                            "type": "text",
-                            "text": question
-                        },
-
-                        {
-                            "type": "image_url",
-                            "image_url": {
-                                "url":
-                                "data:image/jpeg;base64,"
-                                + image_base64
-                            }
-                        }
-                    ]
-                }
-            ],
-
-            temperature=0.2,
-            max_completion_tokens=1200
+        response = self.client.audio.transcriptions.create(
+            file=(
+                "quantum_voice.wav",
+                audio_bytes,
+                "audio/wav"
+            ),
+            model=self.models["speech_to_text"],
+            response_format="json"
         )
 
-        return response.choices[0].message.content
+        return response.text
 
     # ==========================================
     # MODEL INFORMATION
     # ==========================================
 
     def get_models(self):
-
         return self.models.copy()
+
+    # ==========================================
+    # CHANGE MODEL
+    # ==========================================
+
+    def set_model(self, capability, model):
+
+        if capability not in self.models:
+            raise ValueError(
+                f"Unknown capability: {capability}"
+            )
+
+        self.models[capability] = model
