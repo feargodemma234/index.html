@@ -1,17 +1,21 @@
 import streamlit as st
+import streamlit.components.v1 as components
 from groq import Groq
 from datetime import datetime
+
+# ==============================
+# PAGE CONFIG
+# ==============================
 
 st.set_page_config(
     page_title="Quantum OS",
     page_icon="⚛️",
-    layout="wide",
-    initial_sidebar_state="expanded"
+    layout="wide"
 )
 
-# -----------------------------
-# QUANTUM OS STYLE
-# -----------------------------
+# ==============================
+# STYLE
+# ==============================
 
 st.markdown("""
 <style>
@@ -24,8 +28,8 @@ st.markdown("""
     color: white;
 }
 
-section[data-testid="stSidebar"] {
-    background: #0b1020;
+[data-testid="stSidebar"] {
+    background: #090d1c;
 }
 
 h1, h2, h3 {
@@ -35,12 +39,11 @@ h1, h2, h3 {
 .quantum-title {
     font-size: 42px;
     font-weight: 800;
-    margin-bottom: 0;
 }
 
-.quantum-subtitle {
+.subtitle {
     color: #aeb8d8;
-    font-size: 16px;
+    margin-bottom: 25px;
 }
 
 .card {
@@ -51,29 +54,26 @@ h1, h2, h3 {
     margin-bottom: 15px;
 }
 
-.division {
-    padding: 18px;
-    border-radius: 16px;
+.voice-card {
+    padding: 25px;
+    border-radius: 20px;
     background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.08);
-    min-height: 120px;
+    text-align: center;
 }
 
 </style>
 """, unsafe_allow_html=True)
 
-
-# -----------------------------
+# ==============================
 # SESSION STATE
-# -----------------------------
+# ==============================
 
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-
-# -----------------------------
+# ==============================
 # SIDEBAR
-# -----------------------------
+# ==============================
 
 with st.sidebar:
 
@@ -84,6 +84,7 @@ with st.sidebar:
         [
             "🏠 Home",
             "🤖 Quantum AI",
+            "🎙️ Voice AI",
             "🏢 Divisions",
             "📁 Files",
             "⚙️ Settings"
@@ -92,13 +93,13 @@ with st.sidebar:
 
     st.divider()
 
-    st.caption("Quantum Administration Empire")
-    st.caption("Quantum OS v0.2")
+    st.caption("The Quantum Administration Empire")
+    st.caption("Quantum OS v0.3")
 
 
-# -----------------------------
+# ==============================
 # HOME
-# -----------------------------
+# ==============================
 
 if page == "🏠 Home":
 
@@ -108,78 +109,57 @@ if page == "🏠 Home":
     )
 
     st.markdown(
-        '<div class="quantum-subtitle">'
+        '<div class="subtitle">'
         'The digital foundation of The Quantum Administration Empire.'
         '</div>',
         unsafe_allow_html=True
     )
 
-    st.divider()
-
     col1, col2, col3 = st.columns(3)
 
     with col1:
-        st.markdown(
-            '<div class="card">'
-            '<h3>🤖 Quantum AI</h3>'
-            '<p>AI intelligence powered by Groq.</p>'
-            '</div>',
-            unsafe_allow_html=True
-        )
+        st.markdown("""
+        <div class="card">
+        <h3>🤖 Quantum AI</h3>
+        <p>AI intelligence powered by Groq.</p>
+        </div>
+        """, unsafe_allow_html=True)
 
     with col2:
-        st.markdown(
-            '<div class="card">'
-            '<h3>🏢 Empire</h3>'
-            '<p>10 major technology and industrial divisions.</p>'
-            '</div>',
-            unsafe_allow_html=True
-        )
+        st.markdown("""
+        <div class="card">
+        <h3>🎙️ Voice</h3>
+        <p>Talk to Quantum AI using your microphone.</p>
+        </div>
+        """, unsafe_allow_html=True)
 
     with col3:
-        st.markdown(
-            '<div class="card">'
-            '<h3>⚡ System</h3>'
-            '<p>Quantum OS v0.2 prototype.</p>'
-            '</div>',
-            unsafe_allow_html=True
-        )
+        st.markdown("""
+        <div class="card">
+        <h3>🏢 Empire</h3>
+        <p>10 major divisions.</p>
+        </div>
+        """, unsafe_allow_html=True)
 
-    st.subheader("Empire Overview")
+    st.divider()
 
-    divisions = [
-        ("🤖", "AI"),
-        ("🦾", "Robotics"),
-        ("⚡", "Energy"),
-        ("🧬", "Health"),
-        ("🚀", "Space"),
-        ("🏆", "Sports"),
-        ("🏭", "Manufacturing"),
-        ("🏗️", "Infrastructure"),
-        ("🛡️", "Defense"),
-        ("🌌", "Exploration")
-    ]
+    st.subheader("System Status")
 
-    cols = st.columns(5)
+    c1, c2, c3 = st.columns(3)
 
-    for i, (icon, name) in enumerate(divisions):
+    with c1:
+        st.metric("Quantum OS", "ONLINE")
 
-        with cols[i % 5]:
+    with c2:
+        st.metric("AI Engine", "GROQ")
 
-            st.markdown(
-                f'''
-                <div class="division">
-                    <h3>{icon} {name}</h3>
-                    <p>Quantum {name} Division</p>
-                </div>
-                ''',
-                unsafe_allow_html=True
-            )
+    with c3:
+        st.metric("Version", "0.3")
 
 
-# -----------------------------
-# QUANTUM AI
-# -----------------------------
+# ==============================
+# TEXT AI
+# ==============================
 
 elif page == "🤖 Quantum AI":
 
@@ -187,7 +167,6 @@ elif page == "🤖 Quantum AI":
 
     st.caption("Powered by Groq")
 
-    # Display conversation
     for message in st.session_state.messages:
 
         with st.chat_message(message["role"]):
@@ -215,18 +194,21 @@ elif page == "🤖 Quantum AI":
                 {
                     "role": "system",
                     "content": """
-You are Quantum AI, the AI assistant
-inside Quantum OS.
+You are Quantum AI.
 
-You are part of The Quantum Administration Empire.
+You are the AI assistant of
+The Quantum Administration Empire.
 
-Be helpful, clear, ambitious, and technically accurate.
-Help users design software, AI systems,
-businesses, robotics, infrastructure,
-and other technology projects.
+Help the user build technology,
+software, AI, robotics, energy,
+health, space, manufacturing,
+infrastructure and exploration projects.
 
-Do not claim that fictional projects already exist.
-Distinguish plans from real-world facts.
+Be clear, ambitious and technically
+accurate.
+
+Never pretend that a hypothetical
+project already exists.
 """
                 }
             ]
@@ -247,7 +229,7 @@ Distinguish plans from real-world facts.
         except Exception as e:
 
             answer = (
-                "Quantum AI could not connect to Groq.\n\n"
+                "I couldn't connect to Groq.\n\n"
                 "Check your GROQ_API_KEY in Streamlit Secrets.\n\n"
                 f"Error: `{e}`"
             )
@@ -261,38 +243,199 @@ Distinguish plans from real-world facts.
             st.markdown(answer)
 
 
-# -----------------------------
+# ==============================
+# VOICE AI
+# ==============================
+
+elif page == "🎙️ Voice AI":
+
+    st.title("🎙️ Quantum Voice")
+
+    st.write(
+        "Talk to Quantum AI using your device microphone."
+    )
+
+    st.divider()
+
+    # Browser speech recognition
+    components.html(
+        """
+        <!DOCTYPE html>
+
+        <html>
+
+        <body style="
+            background: transparent;
+            color: white;
+            font-family: Arial;
+            text-align: center;
+        ">
+
+        <h2>🎙️ Quantum Voice</h2>
+
+        <button
+            onclick="startListening()"
+            style="
+                font-size:20px;
+                padding:15px 25px;
+                border-radius:15px;
+                border:none;
+                cursor:pointer;
+            "
+        >
+        🎤 Talk
+        </button>
+
+        <button
+            onclick="stopSpeaking()"
+            style="
+                font-size:20px;
+                padding:15px 25px;
+                border-radius:15px;
+                border:none;
+                cursor:pointer;
+                margin-left:10px;
+            "
+        >
+        🔇 Stop
+        </button>
+
+        <p id="status">
+        Press Talk and speak.
+        </p>
+
+        <p id="result"></p>
+
+        <script>
+
+        const SpeechRecognition =
+            window.SpeechRecognition ||
+            window.webkitSpeechRecognition;
+
+        let recognition;
+
+        if (SpeechRecognition) {
+
+            recognition = new SpeechRecognition();
+
+            recognition.continuous = false;
+
+            recognition.interimResults = false;
+
+            recognition.lang = "en-US";
+
+            recognition.onstart = function() {
+
+                document.getElementById("status")
+                .innerText =
+                "🎙️ Listening...";
+
+            };
+
+            recognition.onresult = function(event) {
+
+                const text =
+                    event.results[0][0].transcript;
+
+                document.getElementById("result")
+                .innerText =
+                    "You said: " + text;
+
+                document.getElementById("status")
+                .innerText =
+                    "Voice captured.";
+
+                // Send recognized text to Streamlit
+                window.parent.postMessage({
+                    type: "quantum_voice",
+                    text: text
+                }, "*");
+
+            };
+
+            recognition.onerror = function(event) {
+
+                document.getElementById("status")
+                .innerText =
+                    "Microphone error: " +
+                    event.error;
+
+            };
+
+        } else {
+
+            document.getElementById("status")
+            .innerText =
+            "Speech recognition is not supported by this browser.";
+
+        }
+
+
+        function startListening() {
+
+            if (recognition) {
+
+                recognition.start();
+
+            }
+
+        }
+
+
+        function stopSpeaking() {
+
+            window.speechSynthesis.cancel();
+
+            document.getElementById("status")
+            .innerText =
+            "Speech stopped.";
+
+        }
+
+        </script>
+
+        </body>
+
+        </html>
+        """,
+        height=300
+    )
+
+    st.info(
+        "The microphone component captures your voice. "
+        "The next step is connecting the captured text "
+        "directly to the Groq conversation."
+    )
+
+
+# ==============================
 # DIVISIONS
-# -----------------------------
+# ==============================
 
 elif page == "🏢 Divisions":
 
     st.title("🏢 Quantum Administration Empire")
 
-    st.write(
-        "The empire currently consists of 10 equal divisions."
-    )
-
     divisions = [
-        ("🤖", "AI", "100 billion shares"),
-        ("🦾", "Robotics", "100 billion shares"),
-        ("⚡", "Energy", "100 billion shares"),
-        ("🧬", "Health", "100 billion shares"),
-        ("🚀", "Space", "100 billion shares"),
-        ("🏆", "Sports", "100 billion shares"),
-        ("🏭", "Manufacturing", "100 billion shares"),
-        ("🏗️", "Infrastructure", "100 billion shares"),
-        ("🛡️", "Defense", "100 billion shares"),
-        ("🌌", "Exploration", "100 billion shares")
+        ("🤖", "AI"),
+        ("🦾", "Robotics"),
+        ("⚡", "Energy"),
+        ("🧬", "Health"),
+        ("🚀", "Space"),
+        ("🏆", "Sports"),
+        ("🏭", "Manufacturing"),
+        ("🏗️", "Infrastructure"),
+        ("🛡️", "Defense"),
+        ("🌌", "Exploration")
     ]
 
-    for icon, name, shares in divisions:
+    for icon, name in divisions:
 
         st.markdown(
             f"""
             <div class="card">
-                <h2>{icon} Quantum {name}</h2>
-                <p>Division allocation: {shares}</p>
+            <h2>{icon} Quantum {name}</h2>
+            <p>Allocation: 100 billion shares</p>
             </div>
             """,
             unsafe_allow_html=True
@@ -304,45 +447,38 @@ elif page == "🏢 Divisions":
     )
 
 
-# -----------------------------
+# ==============================
 # FILES
-# -----------------------------
+# ==============================
 
 elif page == "📁 Files":
 
     st.title("📁 Quantum Files")
 
-    uploaded = st.file_uploader(
-        "Upload a file",
+    files = st.file_uploader(
+        "Upload files",
         accept_multiple_files=True
     )
 
-    if uploaded:
+    if files:
 
-        st.success(
-            f"{len(uploaded)} file(s) uploaded."
-        )
-
-        for file in uploaded:
+        for file in files:
 
             st.write(
                 f"📄 {file.name}"
             )
 
 
-# -----------------------------
+# ==============================
 # SETTINGS
-# -----------------------------
+# ==============================
 
 elif page == "⚙️ Settings":
 
     st.title("⚙️ Quantum OS Settings")
 
-    st.write("### System Information")
-
-    st.write("**Operating System:** Quantum OS")
-    st.write("**Version:** 0.2")
-    st.write("**AI Engine:** Groq")
+    st.write("**Version:** 0.3")
+    st.write("**AI:** Groq")
     st.write("**Interface:** Streamlit")
     st.write("**Project:** Building an Empire")
 
@@ -353,11 +489,13 @@ elif page == "⚙️ Settings":
         st.session_state.messages = []
 
         st.success(
-            "Quantum AI conversation cleared."
+            "Conversation cleared."
         )
 
     st.divider()
 
     st.caption(
-        f"System time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
+        datetime.now().strftime(
+            "%Y-%m-%d %H:%M:%S"
+        )
     )
