@@ -11,9 +11,9 @@ class QuantumAIManager:
         )
 
         self.models = {
-    "general": "llama-3.3-70b-versatile",        # Quantum AI - still works
-    "vision": "meta-llama/llama-4-scout-17b-16e-instruct",  # Quantum Vision - NEW
-    "speech_to_text": "whisper-large-v3-turbo"   # Quantum Voice - still works
+    "general": "llama-3.3-70b-versatile",
+    "vision": "gemini-2.0-flash",  # Need google-genai SDK for this
+    "speech_to_text": "whisper-large-v3-turbo"
 }
 
     # ==========================================
