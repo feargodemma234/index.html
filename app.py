@@ -41,7 +41,7 @@ client = get_client()
 # MODELS
 # ------------------------------------------------------------
 
-CHAT_MODEL = "llama-3.1-8b-instant"
+CHAT_MODEL = "mixtral-8x7b-32768"
 STT_MODEL = "whisper-large-v3-turbo"
 TTS_MODEL = "canopylabs/orpheus-v1-english"
 
