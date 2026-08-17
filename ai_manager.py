@@ -10,7 +10,7 @@ class QuantumAIManager:
         )
 
         self.text_model = "# OLD
-model="llama-3.3-70b-instruct"
+model="llama3-70b-8192"
         self.stt_model = "whisper-large-v3-turbo"
         self.tts_model = "canopylabs/orpheus-v1-english"
         self.voice = "troy"
