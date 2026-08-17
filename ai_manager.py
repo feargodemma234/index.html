@@ -9,7 +9,7 @@ class QuantumAIManager:
             api_key=st.secrets["GROQ_API_KEY"]
         )
 
-        self.text_model = "llama-3.3-70b-versatile"
+        self.text_model = "mixtral-8x7b-32768"
         self.stt_model = "whisper-large-v3-turbo"
         self.tts_model = "canopylabs/orpheus-v1-english"
         self.voice = "troy"
